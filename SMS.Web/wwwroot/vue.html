@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link href="css/site.css" rel="stylesheet">
+    <title>JS Dom Demo</title>
+</head>
+<body>
+    <div class="container">
+
+        <div id="vue">
+            <h2 class="text-primary my-3">Javascript Demo Page</h2>
+            <div class="d-flex flex-row align-items-center">
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" name="range" v-model="range" value="ALL" checked>
+                    <label class="form-check-label" for="range">All</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" name="range" v-model="range" value="CLOSED">
+                    <label class="form-check-label" for="range">Closed</label>
+                </div>
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" name="range" v-model="range" value="OPEN">
+                    <label class="form-check-label" for="range">Open</label>
+                </div>
+                
+                <input class="form-control me-2" id="query" v-model="query" placeholder="Search..">
+                <button class="btn btn-outline-success my-2 my-sm-0" @click="search">Search</button>
+            </div>
+
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <td>Id</td>
+                        <td>Student</td>
+                        <td>Created</td>
+                        <td>Issue</td>
+                        <td>Active</td>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    <tr v-for="t in tickets" :key="t.id" >
+                        <td>{{t.id}}</td>
+                        <td>{{t.student}}</td>
+                        <td>{{t.createdOn}}</td>
+                        <td>{{t.issue}}</td>
+                        <td v-if="t.active"><i class='bi bi-toggle-on'></i></td>  
+                        <td v-else><i class='bi bi-toggle-off'></i></td>  
+                    </tr>
+                </tbody>
+            </table>
+        </div>   
+       
+    </div>
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <!-- <script src='https://unpkg.com/vue@3.2.31/dist/vue.global.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script> -->
+    <script>
+        // https://developerlife.com/2018/08/15/introduction-to-vue/
+        
+        Vue.createApp({
+            mounted() {
+                this.search()
+            },
+            data() {
+                return {
+                    tickets: [],
+                    query: '',
+                    range: 'ALL'
+                }
+            },
+            methods: {
+                search: async function () {
+                    const resp = await fetch(`/api/ticket/search?query=${this.query}&range=${this.range}`)
+                    this.tickets = await resp.json()
+                }
+            }
+        }).mount('#vue')
+
+    </script>
+</body>
+</html>

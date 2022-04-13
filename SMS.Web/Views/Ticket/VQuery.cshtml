@@ -1,0 +1,66 @@
+<div id="vue">
+    <div class="d-flex flex-row align-items-center">
+        <div class="form-check me-3">
+            <input class="form-check-input" v-model="range" type="radio" value="@TicketRange.ALL" checked>
+            <label class="form-check-label" for="Range">All</label>
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input" v-model="range" type="radio"  value="@TicketRange.CLOSED">
+            <label class="form-check-label" for="Range">Closed</label>
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input" v-model="range" type="radio" value="@TicketRange.OPEN" >
+            <label class="form-check-label" for="Range">Open</label>
+        </div>
+
+        <input class="form-control me-2" v-model="query" placeholder="Search..">
+    
+        <button class="btn btn-outline-success my-2 my-sm-0" v-on:click="search">Search</button>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Student</th>        
+            <th>Created</th> 
+            <th>Issue</th> 
+            <th>Active</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            <tr v-for="t in tickets" :key="t.id">
+                <td>{{t.id}}</td>
+                <td>{{t.student}}</td>
+                <td>{{t.createdOn}}</td>
+                <td>{{t.issue}}</td>
+                <td>
+                    <i v-if="t.active" class='bi bi-toggle-on'></i>
+                    <i v-else class='bi bi-toggle-off'></i>
+                </td>                
+            </tr>
+        </tbody>
+    </table> 
+</div>
+
+    
+<script src="https://unpkg.com/vue@3"></script>
+<script> 
+    Vue.createApp({
+        data() {
+            return {
+                tickets: [],
+                query: '',
+                range: 'ALL'
+            }
+        },
+        methods: {
+            search: function () {
+                fetch(`/api/ticket/search?query=${this.query}&range=${this.range}`)
+                .then(resp => resp.json())
+                .then(data => this.tickets = data)
+            }
+        }
+    }).mount('#vue')
+</script>
